@@ -347,7 +347,7 @@ export const sendMessage = async (text, docId) => {
 			successMessage("Message Sent! ✅");
 			emailStaffMessage(
 				doc.name,
-				`http://localhost:3000/chat/${doc.$id}`,
+				`https://firm-support.vercel.app/chat/${doc.$id}`,
 				doc.email,
 				doc.access_code
 			);
