@@ -22,7 +22,7 @@ const AuthNav = () => {
 	return (
 		<nav className='w-full h-[10vh] md:px-8 px-4 py-2 border-b-[1px] border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10'>
 			<Link href='/'>
-				<h2 className='font-bold text-xl'>SupportSwift</h2>
+				<h2 className='font-bold text-xl'>FirmSupport</h2>
 			</Link>
 			<div className='flex items-center space-x-5'>
 				<p className='md-block hidden'>{user?.name || " "}</p>
