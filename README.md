@@ -13,7 +13,7 @@
 - [YouTube Demo](https://www.youtube.com/watch?v=tnncdRhvLOg)
 
 ## How-to Guide
-[Read article on DEVCommunity]()
+[Read article on DEV]()
 
 ## Installation
 - Clone the project repository. Don't forget to star the repo 😉
