@@ -41,12 +41,6 @@ const emailStaffMessage = (user, chatURL, email, access_code) => {
 		);
 };
 
-export const createSlug = (sentence) => {
-	let slug = sentence.toLowerCase().trim();
-	slug = slug.replace(/[^a-z0-9]+/g, "-");
-	slug = slug.replace(/^-+|-+$/g, "");
-	return slug;
-};
 export const parseJSON = (jsonString) => {
 	try {
 		return JSON.parse(jsonString);
@@ -162,6 +156,49 @@ export const checkAuthStatus = async (setUser, setLoading, router) => {
 	}
 };
 
+export const addUser = async (name, email, password) => {
+	try {
+		//👇🏻 create a new acct on Appwrite Auth
+		await account.create(generateID(), email, password, name);
+		//👇🏻 adds the user's details to the users database
+		await db.createDocument(
+			process.env.NEXT_PUBLIC_DB_ID,
+			process.env.NEXT_PUBLIC_USERS_COLLECTION_ID,
+			ID.unique(),
+			{ user_id: generateID(), name, email }
+		);
+		successMessage("User added successfully 🎉");
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getUsers = async (setUsers) => {
+	try {
+		const response = await db.listDocuments(
+			process.env.NEXT_PUBLIC_DB_ID,
+			process.env.NEXT_PUBLIC_USERS_COLLECTION_ID
+		);
+		setUsers(response.documents);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deleteUser = async (id) => {
+	try {
+		await db.deleteDocument(
+			process.env.NEXT_PUBLIC_DB_ID,
+			process.env.NEXT_PUBLIC_USERS_COLLECTION_ID,
+			id
+		);
+		successMessage("User removed 🎉"); // Success
+	} catch (error) {
+		console.log(error); // Failure
+		errorMessage("Encountered an error 😪");
+	}
+};
+
 export const startMessage = async (
 	name,
 	email,
@@ -202,6 +239,7 @@ export const startMessage = async (
 				convertDateTime(response.$createdAt),
 				subject
 			);
+			newTicketStaff(name);
 			setLoading(false);
 			successMessage("Ticket created 🎉");
 		} catch (error) {
@@ -223,57 +261,6 @@ export const startMessage = async (
 		}
 	} else {
 		await createTicket();
-	}
-};
-
-export const addUser = async (name, email, password) => {
-	try {
-		await account.create(generateID(), email, password, name);
-
-		const addUserToDatabase = async () => {
-			try {
-				const response = await db.createDocument(
-					process.env.NEXT_PUBLIC_DB_ID,
-					process.env.NEXT_PUBLIC_USERS_COLLECTION_ID,
-					ID.unique(),
-					{ user_id: generateID(), name, email }
-				);
-				successMessage("User added successfully 🎉");
-			} catch (error) {
-				console.log(error);
-				errorMessage("Encountered an error (Invalid data) ❌");
-			}
-		};
-
-		await addUserToDatabase();
-	} catch (error) {
-		console.log(error);
-	}
-};
-
-export const getUsers = async (setUsers) => {
-	try {
-		const response = await db.listDocuments(
-			process.env.NEXT_PUBLIC_DB_ID,
-			process.env.NEXT_PUBLIC_USERS_COLLECTION_ID
-		);
-		setUsers(response.documents);
-	} catch (error) {
-		console.log(error);
-	}
-};
-
-export const deleteUser = async (id) => {
-	try {
-		await db.deleteDocument(
-			process.env.NEXT_PUBLIC_DB_ID,
-			process.env.NEXT_PUBLIC_USERS_COLLECTION_ID,
-			id
-		);
-		successMessage("User removed 🎉"); // Success
-	} catch (error) {
-		console.log(error); // Failure
-		errorMessage("Encountered an error 😪");
 	}
 };
 
@@ -388,6 +375,23 @@ const notifyStaff = async (username, status, title) => {
 				username,
 				status,
 				title,
+			}),
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+		});
+	} catch (err) {
+		console.error(err);
+	}
+};
+
+const newTicketStaff = async (username) => {
+	try {
+		await fetch("/api/new", {
+			method: "POST",
+			body: JSON.stringify({
+				username,
 			}),
 			headers: {
 				Accept: "application/json",
