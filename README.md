@@ -13,7 +13,7 @@
 - [YouTube Demo](https://www.youtube.com/watch?v=tnncdRhvLOg)
 
 ## How-to Guide
-[Read article on DEV]()
+[Read article on DEV](https://dev.to/arshadayvid/building-a-customer-support-app-with-live-chat-and-notifications-using-nextjs-novu-and-appwrite-2fn8)
 
 ## Installation
 - Clone the project repository. Don't forget to star the repo 😉
